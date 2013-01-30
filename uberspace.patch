@@ -1,0 +1,60 @@
+From a52002773003c20783551fd8ddeb679715201c57 Mon Sep 17 00:00:00 2001
+From: Gabriel Bretschner <info@kanedo.net>
+Date: Wed, 30 Jan 2013 17:27:06 +0100
+Subject: [PATCH 1/2] gem "rb-inotify" in GemFile
+
+---
+ Gemfile | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Gemfile b/Gemfile
+index 96b5bb6..c659351 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -97,6 +97,9 @@ gem 'settingslogic'
+ gem "foreman"
+ gem "git"
+ 
++#Uberspace
++gem "rb-inotify"
++
+ group :assets do
+   gem "sass-rails",   "~> 3.2.5"
+   gem "coffee-rails", "~> 3.2.2"
+-- 
+1.7.11.3
+
+
+From 19c9d3d11fe7e0cecd849d349d68fc959217d0ce Mon Sep 17 00:00:00 2001
+From: Gabriel Bretschner <info@kanedo.net>
+Date: Wed, 30 Jan 2013 17:27:57 +0100
+Subject: [PATCH 2/2] deleted redis:// url-scheme
+
+---
+ config/initializers/4_sidekiq.rb | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/config/initializers/4_sidekiq.rb b/config/initializers/4_sidekiq.rb
+index 6abe6e7..bf06e44 100644
+--- a/config/initializers/4_sidekiq.rb
++++ b/config/initializers/4_sidekiq.rb
+@@ -9,14 +9,14 @@ resque_url = if File.exists?(config_file)
+ 
+ Sidekiq.configure_server do |config|
+   config.redis = {
+-    url: "redis://#{resque_url}",
++    url: "#{resque_url}",
+     namespace: 'resque:gitlab'
+   }
+ end
+ 
+ Sidekiq.configure_client do |config|
+   config.redis = {
+-    url: "redis://#{resque_url}",
++    url: "#{resque_url}",
+     namespace: 'resque:gitlab'
+   }
+ end
+-- 
+1.7.11.3
+
