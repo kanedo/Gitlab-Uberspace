@@ -22,11 +22,12 @@
 #
 ########################################################################
 #
-# Uberspace Service-Script to start gitlab with daemontools
+# Uberspace Service-Script to start gitlaband redis with daemontools
 #
 ########################################################################
 export GITLAB_PORT=54321
 export GITLAB_PATH=$HOME/gitlab
 
 cd $GITLAB_PATH
+redis-server $HOME/.redis/conf
 exec bundle exec unicorn_rails -E production -p $GITLAB_PORT 
