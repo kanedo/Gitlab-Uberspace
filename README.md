@@ -213,6 +213,12 @@ Das geschieht mit:
 	
 Fertig. Euer Gitlab sollte laufen, ihr dürft pushen und SSH-Zugang habt ihr auch noch.
 
+##Fehlermeldungen und was man dagegen machen kann
+###`bundle exec rake gitlab:setup RAILS_ENV=production` 
+####mit Fehler `rake aborted! No route to host - connect(2)`
+Scheinbar wurde der Patch nicht angewandt. Wichtig ist, dass in der Datei `config/initializers/4_sidekiq.rb` an zwei Stellen das `redis://` __komplett__ entfernt wird.
+####mit Fehler `No such file or directory – connect(2)`
+Vorher Redis starten mit `redis-server $HOME/.redis/conf` 
 ##Ein paar Anmerkungen
 Leider habe ich es nicht geschafft, den Sidekiq-Prozess als Daemon laufen zu lassen (Auch wenn es da einen Service im Repository zu gibt). Der geht immer in den Hintergrund und wird dadurch von Daemontools neu gestartet und läuft dan Amok.
 Deswegen müsst ihr im Moment sidekiq noch händisch starten mittels 
