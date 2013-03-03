@@ -1,0 +1,57 @@
+# Balast entfernen
+Um alles Uberspace-konform zu installieren, müssen wir zunächst etwas "aufräumen".
+
+## Redis löschen
+### Laufende Instanzen beenden
+Zunächst einmal müssen wir die aktuell laufende `redis`-Instanz beendet werden.
+
+Wer nicht weiß, wie das funktioniert:
+    pkill redis-server
+
+Prüft nun, ob noch eine Instanz läuft:
+    ps aux | grep <uberspace-name>
+   
+Falls noch eine Instanz läuft:
+    kill <process-id>
+    
+### Deinstallation
+Zur Deinstallation nutzen wir `toast` und löschen anschließend das Konfigurationsverzeichnis:
+    toast disarm redis
+    toast remove redis
+    rm -rf ~/.redis
+
+## RVM entfernen
+    rvm implode
+    gem uninstall rvm
+
+(Quelle: http://stackoverflow.com/a/3558763)
+
+Falls das `.rvm`-Verzeichnis nicht gelöscht wurde, tut dies manuell:
+    rm -rf ~/.rvm
+
+# Vorbereitungen (s. anderes Tutorial)
+
+# Gitolite überspringen
+Habt ihr ja bereits installiert. Lassen wir so, wie es ist :)
+
+# Gitlab
+Sicherheitshalber sollten wir `sidekiq` und `gitlab` stoppen:
+    svc -d ~/service/gitlab
+
+Sidekiq stoppen wir händisch, indem wir uns dessen PID suchen und den Prozess mit `kill` stoppen (siehe ggf. [hier](#laufende-instanzen-beenden)
+
+## GitLab aktualisieren
+    cd ~/gitlab
+    git fetch
+    git checkout 4-2-stable
+
+## Konfiguration
+Die Konfiguration kann übersprungen werden. Ihr habt ja schon alles konfiguriert ;-)
+
+## Abhängigkeiten installieren
+    bundle install --without development test postgres --deployment
+
+## Migration statt Installation
+    bundle exec rake db:migrate RAILS_ENV=production
+
+Anschließend ggf. noch sidekiq starten und fertig.

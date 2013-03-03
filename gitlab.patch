@@ -1,0 +1,35 @@
+diff --git a/Gemfile b/Gemfile
+index 96b5bb6..2380bcc 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -93,6 +93,9 @@ gem "colored"
+ # GitLab settings
+ gem 'settingslogic'
+ 
++# Uberspace
++gem "rb-inotify"
++
+ # Misc
+ gem "foreman"
+ gem "git"
+diff --git a/config/initializers/4_sidekiq.rb b/config/initializers/4_sidekiq.rb
+index 6abe6e7..bf06e44 100644
+--- a/config/initializers/4_sidekiq.rb
++++ b/config/initializers/4_sidekiq.rb
+@@ -9,14 +9,14 @@ resque_url = if File.exists?(config_file)
+ 
+ Sidekiq.configure_server do |config|
+   config.redis = {
+-    url: "redis://#{resque_url}",
++    url: "#{resque_url}",
+     namespace: 'resque:gitlab'
+   }
+ end
+ 
+ Sidekiq.configure_client do |config|
+   config.redis = {
+-    url: "redis://#{resque_url}",
++    url: "#{resque_url}",
+     namespace: 'resque:gitlab'
+   }
+ end
