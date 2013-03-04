@@ -224,4 +224,9 @@ Mit unserer Apache-Konfiguration ist es nicht möglich, den `/uploads`-Ordner zu 
 ### Projekte klonen funktioniert nicht
 Benutzer ohne SSH-Schlüssel können keine Projekte erstellen. Zwar macht GitLab den Eindruck, dass ein Projekt angelegt wurde, schaut man aber ins Dateisystem werden die Projekte gar nicht erst angelegt. Fügt man dem Benutzer einen SSH-Schlüssel hinzu, klappt es wunderbar.
 
+### Zugriff mit SSH-Key funktioniert nicht
+Nutzt man in GitLab den gleichen SSH-Key wie in Uberspace, so könnte dies die Ursache für das Problem sein. Entfernt den Schlüssel aus GitLab und erstellt einen neuen Schlüssen speziell für GitLab. Man hat zwar dann zwei Schlüssel, aber das hat das Problem bei mir gelöst.
+
+Wenn das Problem immer noch besteht, ist eure Konfiguration defekt.
+
 # Ein paar Anmerkungen
