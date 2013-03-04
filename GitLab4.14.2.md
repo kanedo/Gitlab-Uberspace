@@ -55,7 +55,12 @@ Sidekiq stoppen wir händisch, indem wir uns dessen PID suchen und den Prozess mi
     git fetch
     git checkout 4-2-stable
 
-## Patch anwenden    
+## Patch anwenden 
+
+    curl https://raw.github.com/kanedo/Gitlab-Uberspace/master/uberspace.patch -o uberspace.patch
+    git apply --check uberspace.patch
+
+Bitte versichert euch, dass der Patch auch wirklich angewendet wurde. 
     
 ## Konfiguration
 Die Konfiguration kann übersprungen werden. Ihr habt ja schon alles konfiguriert ;-)
