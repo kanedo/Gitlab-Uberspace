@@ -2,9 +2,11 @@
 
 ## Redis installieren
 Schaut zunächst einmal, ob ihr die `deamontools` auf eurem Uberspace eingerichtet habt. Falls ihr noch kein `~/service`-Verzeichnis habt, legt es euch mit folgendem Befehl an:
+
     uberspace-setup-svscan
 
 Nun kann `redis` installiert werden:
+
     uberspace-setup-redis
 
 Redis sollte nun installiert sein. Es läuft nun als zentraler Service auf eurem Uberspace.
@@ -18,6 +20,7 @@ GitLab erfordert Ruby 1.9.3, also müssen wir dies auf eurem Uberspace aktivieren
     __EOF__
 
 Nun müssen wir die geänderte Konfiguration noch einlesen:
+
     . ~/.bash_profile
 
 ## Python2 auf Python2.7 setzen
@@ -71,6 +74,7 @@ Jetzt gitlab wirklich installieren. Leider muss man ein paar Dinge nicht nur in 
     git checkout 4-2-stable
 
 Jetzt den Patch anwenden:
+
     curl https://raw.github.com/kanedo/Gitlab-Uberspace/master/uberspace.patch -o uberspace.patch
     git apply --check uberspace.patch
     
@@ -123,7 +127,8 @@ Es interessiert euch lediglich der Bereich production.
     nano config/resque.yml
 
 In dieser Datei ersetzt ihr `production: ...` durch:
-    'unix:/home/<euer uberspace name>/.redis/sock'
+
+    production: 'unix:/home/<euer uberspace name>/.redis/sock'
 
 Dafür war auch der Patch wichtig (unter anderem).
 
@@ -131,6 +136,7 @@ Dafür war auch der Patch wichtig (unter anderem).
     gem install charlock_holmes --version '0.6.9'
 
 Prüft vorher ob ihr den nicht schon installiert habt mit
+
     gem list --local | grep charlock
 
 Die Installation kann schon sehr lange dauern!
@@ -144,7 +150,8 @@ Anmerkung: Das `--path ~/.gem` sorgt dafür, dass Gems nicht global, sondern loka
 nano ./lib/hooks/post-receive
 
 Hier jetzt `redis-cli` durch
-redis-cli -s /home/<euer uberspace name>/.redis/sock
+
+    redis-cli -s /home/<euer uberspace name>/.redis/sock
 
 ersetzen. Anschließend
 
@@ -171,11 +178,13 @@ Eine Installationsanleitung findet man im [Dokuwiki](http://uberspace.de/dokuwik
 Die Skripte sind auf [Github](https://github.com/kanedo/Gitlab-Uberspace/tree/master/services)
 
 Die ladet ihr euch herunter, legt es bspw. nach `~/bin/`. Ausführbar wird es durch
+    
     chmod +x ~/bin/gitlab
 
 In dem Skript ist der Port angegeben, auf den Gitlab lauschen soll, den müsst ihr noch einstellen. Er muss 5-stellig sein und auf eurem Host frei. Wenn die gitlab-Installation in `~/gitlab` liegt reicht das an Änderungen.
 
 Den Service legt ihr nun mit
+    
     uberspace-setup-service gitlab ~/bin/gitlab
 
 an. Damit wird nun `gitlab` automatisch gestartet. Zum Thema `sidekiq` habe ich am Schluss noch etwas angemerkt.
@@ -190,6 +199,7 @@ Legt eine `.htaccess`-Datei in dem Ordner, der die Gitlab-Installation öffentlic
 	</IfModule>
 
 Jetzt mittels `svc -u ~/service/gitlab` GitLab starten. Mit Hilfe von
+
     exec bundle exec rake sidekiq:start RAILS_ENV=production
 
 startet ihr noch sidekiq. Nicht wundern, das Skript verbannt sich in den Hintergrund - bei Putty beendet sich daher das Konsolenfenster. Nun könnt ihr euch in eurem GitLab anmelden. Der Standard-Login ist:
@@ -215,4 +225,3 @@ Mit unserer Apache-Konfiguration ist es nicht möglich, den `/uploads`-Ordner zu 
 Benutzer ohne SSH-Schlüssel können keine Projekte erstellen. Zwar macht GitLab den Eindruck, dass ein Projekt angelegt wurde, schaut man aber ins Dateisystem werden die Projekte gar nicht erst angelegt. Fügt man dem Benutzer einen SSH-Schlüssel hinzu, klappt es wunderbar.
 
 # Ein paar Anmerkungen
-<AUS ALTEM TUTORIAL EINFÜGEN>
