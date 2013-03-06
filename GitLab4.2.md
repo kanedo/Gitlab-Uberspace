@@ -150,7 +150,7 @@ Die Installation kann schon sehr lange dauern!
 Anmerkung: Das `--path ~/.gem` sorgt dafür, dass Gems nicht global, sondern lokal installiert werden. (vgl. (https://uberspace.de/dokuwiki/development:ruby#bundler)
 
 ## Hooks konfigurieren
-nano ./lib/hooks/post-receive
+    nano ./lib/hooks/post-receive
 
 Hier jetzt `redis-cli` durch
 
@@ -231,5 +231,18 @@ Benutzer ohne SSH-Schlüssel können keine Projekte erstellen. Zwar macht GitLab d
 Nutzt man in GitLab den gleichen SSH-Key wie in Uberspace, so könnte dies die Ursache für das Problem sein. Entfernt den Schlüssel aus GitLab und erstellt einen neuen Schlüssen speziell für GitLab. Man hat zwar dann zwei Schlüssel, aber das hat das Problem bei mir gelöst.
 
 Wenn das Problem immer noch besteht, ist eure Konfiguration defekt.
+
+### Das "Dashboard" zeigt keine Commits/Pushes an
+Zunächst einmal solltet ihr schauen, ob `sidekiq` anständig läuft. Werft dazu auch einmal einen Blick auf die Log-Datei (findet ihr im Admin-Panel unter Logs > sidekiq.log). Sollte es dort keine Auffälligkeiten geben, geht folgendermaßen vor (ihr solltet vorher natürlich ins GitLab Verzeichnis gewechselt haben):
+
+    nano ./lib/hooks/post-receive
+
+Dort entfernt ihr in der vorletzten Zeile das `env -i` vor `redis-cli -s ...`. Anschließend noch
+
+    cp ./lib/hooks/post-receive ~/.gitolite/hooks/common/post-receive
+
+ausführen und fortan sollte euer Dashboard auch Commits anzeigen.
+
+Quelle: https://groups.google.com/d/msg/gitlabhq/5wXl_4l0LBM/CIDxx_mClNkJ
 
 # Ein paar Anmerkungen
