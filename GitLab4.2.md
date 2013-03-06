@@ -222,7 +222,13 @@ Scheinbar wurde der Patch nicht angewandt. Wichtig ist, dass in der Datei `confi
 
 ## Bekannte Bugs
 ### Attachments: Error 404
-Mit unserer Apache-Konfiguration ist es nicht möglich, den `/uploads`-Ordner zu mappen. Derzeit ist kein Workaround bekannt, da wir beim Apache nicht viel Spielraum für eigene Konfigurationen haben. Falls es jemand dennoch hinbekommen hat, bitte melden!
+Mit unserer Apache-Konfiguration ist es nicht möglich, den `/uploads`-Ordner zu mappen. Wenn ihr dieses Feature nutzen möchtet, könnt ihr euch mit folgenden Workaround behelfen:
+
+Ladet die Dateien `.htaccess` und `attachments.php` aus GitHub herunter und speichert sie in dem Ordner, wo ihr [vorhin](#host-konfiguration) schon eure `.htaccess`-Datei gespeichert habt. Nun müsst ihr die Dateien aber noch auf eure Installation anpassen.
+
+In der `.htaccess`-Datei müsst ihr `<port>` entsprechend auf euren GitLab-Port setzen und in der `attachments.php` ersetzt ihr in der zweiten Zeile `<uberspace-user>` durch euren Uberspace-Namen. Nun sollten auch die Attachments herunterladbar sein.
+
+Falls jemand eine bessere Möglichkeit findet, darf er dies gern kundtun :)
 
 ### Projekte klonen funktioniert nicht
 Benutzer ohne SSH-Schlüssel können keine Projekte erstellen. Zwar macht GitLab den Eindruck, dass ein Projekt angelegt wurde, schaut man aber ins Dateisystem werden die Projekte gar nicht erst angelegt. Fügt man dem Benutzer einen SSH-Schlüssel hinzu, klappt es wunderbar.

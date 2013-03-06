@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{REQUEST_URI} ^/uploads
+RewriteRule ^uploads/(.*)$ attachments.php?f=$1 [L]
+
+RewriteRule ^$ http://127.0.0.1:<port> [P]
+
+RewriteCond %{REQUEST_FILENAME}       !-f
+RewriteCond %{REQUEST_FILENAME}       !-d
+RewriteRule ^(.*)$ http://127.0.0.1:<port>/$1 [P]
+</IfModule>
