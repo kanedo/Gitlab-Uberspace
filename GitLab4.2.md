@@ -1,3 +1,6 @@
+# Wichtige Information
+Da die Installation von GitLab nicht unproblematisch ist, solltet ihr das Tutorial zum einen sehr aufmerksam lesen und bei jedem Schritt immer einen Blick auf die Sektionen "Fehlermeldungen" und "Bekannte Bugs" werfen.
+
 # Vorbereitung
 
 ## Redis installieren
