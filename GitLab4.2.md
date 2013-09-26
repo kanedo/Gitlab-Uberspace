@@ -1,10 +1,15 @@
+# Wichtige Information
+Da die Installation von GitLab nicht unproblematisch ist, solltet ihr das Tutorial zum einen sehr aufmerksam lesen und bei jedem Schritt immer einen Blick auf die Sektionen "Fehlermeldungen" und "Bekannte Bugs" werfen.
+
 # Vorbereitung
 
 ## Redis installieren
 Schaut zunächst einmal, ob ihr die `deamontools` auf eurem Uberspace eingerichtet habt. Falls ihr noch kein `~/service`-Verzeichnis habt, legt es euch mit folgendem Befehl an:
+
     uberspace-setup-svscan
 
 Nun kann `redis` installiert werden:
+
     uberspace-setup-redis
 
 Redis sollte nun installiert sein. Es läuft nun als zentraler Service auf eurem Uberspace.
@@ -18,6 +23,7 @@ GitLab erfordert Ruby 1.9.3, also müssen wir dies auf eurem Uberspace aktivieren
     __EOF__
 
 Nun müssen wir die geänderte Konfiguration noch einlesen:
+
     . ~/.bash_profile
 
 ## Python2 auf Python2.7 setzen
@@ -71,6 +77,7 @@ Jetzt gitlab wirklich installieren. Leider muss man ein paar Dinge nicht nur in 
     git checkout 4-2-stable
 
 Jetzt den Patch anwenden:
+
     curl https://raw.github.com/kanedo/Gitlab-Uberspace/master/uberspace.patch -o uberspace.patch
     git apply --check uberspace.patch
     
@@ -123,7 +130,8 @@ Es interessiert euch lediglich der Bereich production.
     nano config/resque.yml
 
 In dieser Datei ersetzt ihr `production: ...` durch:
-    'unix:/home/<euer uberspace name>/.redis/sock'
+
+    production: 'unix:/home/<euer uberspace name>/.redis/sock'
 
 Dafür war auch der Patch wichtig (unter anderem).
 
@@ -131,6 +139,7 @@ Dafür war auch der Patch wichtig (unter anderem).
     gem install charlock_holmes --version '0.6.9'
 
 Prüft vorher ob ihr den nicht schon installiert habt mit
+
     gem list --local | grep charlock
 
 Die Installation kann schon sehr lange dauern!
@@ -141,10 +150,11 @@ Die Installation kann schon sehr lange dauern!
 Anmerkung: Das `--path ~/.gem` sorgt dafür, dass Gems nicht global, sondern lokal installiert werden. (vgl. (https://uberspace.de/dokuwiki/development:ruby#bundler)
 
 ## Hooks konfigurieren
-nano ./lib/hooks/post-receive
+    nano ./lib/hooks/post-receive
 
 Hier jetzt `redis-cli` durch
-redis-cli -s /home/<euer uberspace name>/.redis/sock
+
+    redis-cli -s /home/<euer uberspace name>/.redis/sock
 
 ersetzen. Anschließend
 
@@ -171,11 +181,13 @@ Eine Installationsanleitung findet man im [Dokuwiki](http://uberspace.de/dokuwik
 Die Skripte sind auf [Github](https://github.com/kanedo/Gitlab-Uberspace/tree/master/services)
 
 Die ladet ihr euch herunter, legt es bspw. nach `~/bin/`. Ausführbar wird es durch
+    
     chmod +x ~/bin/gitlab
 
 In dem Skript ist der Port angegeben, auf den Gitlab lauschen soll, den müsst ihr noch einstellen. Er muss 5-stellig sein und auf eurem Host frei. Wenn die gitlab-Installation in `~/gitlab` liegt reicht das an Änderungen.
 
 Den Service legt ihr nun mit
+    
     uberspace-setup-service gitlab ~/bin/gitlab
 
 an. Damit wird nun `gitlab` automatisch gestartet. Zum Thema `sidekiq` habe ich am Schluss noch etwas angemerkt.
@@ -190,6 +202,7 @@ Legt eine `.htaccess`-Datei in dem Ordner, der die Gitlab-Installation öffentlic
 	</IfModule>
 
 Jetzt mittels `svc -u ~/service/gitlab` GitLab starten. Mit Hilfe von
+
     exec bundle exec rake sidekiq:start RAILS_ENV=production
 
 startet ihr noch sidekiq. Nicht wundern, das Skript verbannt sich in den Hintergrund - bei Putty beendet sich daher das Konsolenfenster. Nun könnt ihr euch in eurem GitLab anmelden. Der Standard-Login ist:
@@ -209,10 +222,33 @@ Scheinbar wurde der Patch nicht angewandt. Wichtig ist, dass in der Datei `confi
 
 ## Bekannte Bugs
 ### Attachments: Error 404
-Mit unserer Apache-Konfiguration ist es nicht möglich, den `/uploads`-Ordner zu mappen. Derzeit ist kein Workaround bekannt, da wir beim Apache nicht viel Spielraum für eigene Konfigurationen haben. Falls es jemand dennoch hinbekommen hat, bitte melden!
+Mit unserer Apache-Konfiguration ist es nicht möglich, den `/uploads`-Ordner zu mappen. Wenn ihr dieses Feature nutzen möchtet, könnt ihr euch mit folgenden Workaround behelfen:
+
+Ladet die Dateien `.htaccess` und `attachments.php` aus GitHub herunter und speichert sie in dem Ordner, wo ihr [vorhin](#host-konfiguration) schon eure `.htaccess`-Datei gespeichert habt. Nun müsst ihr die Dateien aber noch auf eure Installation anpassen.
+
+In der `.htaccess`-Datei müsst ihr `<port>` entsprechend auf euren GitLab-Port setzen und in der `attachments.php` ersetzt ihr in der zweiten Zeile `<uberspace-user>` durch euren Uberspace-Namen. Nun sollten auch die Attachments herunterladbar sein.
+
+Falls jemand eine bessere Möglichkeit findet, darf er dies gern kundtun :)
 
 ### Projekte klonen funktioniert nicht
 Benutzer ohne SSH-Schlüssel können keine Projekte erstellen. Zwar macht GitLab den Eindruck, dass ein Projekt angelegt wurde, schaut man aber ins Dateisystem werden die Projekte gar nicht erst angelegt. Fügt man dem Benutzer einen SSH-Schlüssel hinzu, klappt es wunderbar.
 
+### Zugriff mit SSH-Key funktioniert nicht
+Nutzt man in GitLab den gleichen SSH-Key wie in Uberspace, so könnte dies die Ursache für das Problem sein. Entfernt den Schlüssel aus GitLab und erstellt einen neuen Schlüssen speziell für GitLab. Man hat zwar dann zwei Schlüssel, aber das hat das Problem bei mir gelöst.
+
+Wenn das Problem immer noch besteht, ist eure Konfiguration defekt.
+
+### Das "Dashboard" zeigt keine Commits/Pushes an
+Zunächst einmal solltet ihr schauen, ob `sidekiq` anständig läuft. Werft dazu auch einmal einen Blick auf die Log-Datei (findet ihr im Admin-Panel unter Logs > sidekiq.log). Sollte es dort keine Auffälligkeiten geben, geht folgendermaßen vor (ihr solltet vorher natürlich ins GitLab Verzeichnis gewechselt haben):
+
+    nano ./lib/hooks/post-receive
+
+Dort entfernt ihr in der vorletzten Zeile das `env -i` vor `redis-cli -s ...`. Anschließend noch
+
+    cp ./lib/hooks/post-receive ~/.gitolite/hooks/common/post-receive
+
+ausführen und fortan sollte euer Dashboard auch Commits anzeigen.
+
+Quelle: https://groups.google.com/d/msg/gitlabhq/5wXl_4l0LBM/CIDxx_mClNkJ
+
 # Ein paar Anmerkungen
-<AUS ALTEM TUTORIAL EINFÜGEN>
