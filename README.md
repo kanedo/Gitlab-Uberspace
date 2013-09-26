@@ -32,7 +32,7 @@ ans Ende der `~/.bash_profile` ein.
 Legt eine `conf` Datei in `~/.redis` an (Der Ordner exisitert möglicherweise nicht; anlegen). In diese Datei schreibt ihr dann:
 
 	unixsocket /home/<euer uberspace name>/.redis/sock
-	daemonize yes
+	daemonize no
 	logfile /home/<euer uberspace name>/.redis/log
 	port 0
 ###Bundler installieren
