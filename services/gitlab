@@ -1,7 +1,7 @@
 #!/bin/bash
 ########################################################################
 #
-# 2013-02-04
+# 2014-06-27
 # Gabriel Bretschner
 # info@kanedo.net
 #
@@ -27,8 +27,11 @@
 # for more information see https://uberspace.de/dokuwiki/database:redis#einrichtung
 #
 ########################################################################
-export GITLAB_PORT=54321
-export GITLAB_PATH=$HOME/gitlab
+
+#
+# path to gitlab installation
+# 
+GITLAB_PATH=$HOME/gitlab
 
 cd $GITLAB_PATH
-exec bundle exec unicorn_rails -E production -p $GITLAB_PORT
+bundle exec unicorn_rails -c "$GITLAB_PATH/config/unicorn.rb" -E "production"
