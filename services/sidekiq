@@ -1,7 +1,7 @@
 #!/bin/sh
 ########################################################################
 #
-# 2013-02-04
+# 2014-06-27
 # Gabriel Bretschner
 # info@kanedo.net
 #
@@ -26,7 +26,11 @@
 #
 ########################################################################
 
-export GITLAB_PATH=$HOME/gitlab
+app_root="$HOME/gitlab"
+RAILS_ENV="production"
+sidekiq_pidfile="$app_root/tmp/pids/sidekiq.pid"
+sidekiq_logfile="$app_root/log/sidekiq.log"
 
-cd $GITLAB_PATH
-exec bundle exec rake sidekiq:start 
+cd $app_root
+# Now let's go!
+bundle exec sidekiq -q post_receive -q mailer -q system_hook -q project_web_hook -q gitlab_shell -q common -q default -e $RAILS_ENV -P $sidekiq_pidfile $@ >> $sidekiq_logfile 2>&1
