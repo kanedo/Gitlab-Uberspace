@@ -1,3 +1,6 @@
+**IMPORTANT** This tutorial is based on Version 4!
+
+
 [Blog Eintrag](http://blog.kanedo.net/1306,gitlab-4-1-auf-einem-uberspace-installieren.html?pk_campaign=Tutorial&pk_kwd=github)
 Gitlab ist in Version 4.1 verfügbar und nun möchte der geeignete Uberspace-Nutzer natürlich auch die aktuelle Version verwenden.  
 Leider birgt das immer gewisse Schwierigkeiten, da Gitlab nicht auf Shared-Hosting ausgelegt ist und vor allem exzesiv gebrauch von `sudo` macht.
